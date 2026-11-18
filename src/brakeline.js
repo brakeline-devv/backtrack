@@ -1,4 +1,4 @@
-// Reads the human's Brakeline rules (if Brakeline is installed) so Rehearse can warn when a strategy's
+// Reads the human's Brakeline rules (if Brakeline is installed) so Backtrack can warn when a strategy's
 // position size is bigger than Brakeline will allow, and size today's signals to fit. Looks in BRAKELINE_HOME, then ~/.brakeline, then a sibling ../brakeline/data.
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";

@@ -44,6 +44,6 @@ export function startServer(port = Number(process.env.PORT || 6200)) {
       if (range) { const a = range[1] ? +range[1] : 0, b = range[2] ? +range[2] : size - 1; res.writeHead(206, { "Content-Type": type, "Content-Range": `bytes ${a}-${b}/${size}`, "Accept-Ranges": "bytes", "Content-Length": b - a + 1 }); res.end(data.subarray(a, b + 1)); }
       else { res.writeHead(200, { "Content-Type": type, "Content-Length": size, "Cache-Control": "no-cache" }); res.end(data); }
     } catch { res.writeHead(404).end("not found"); }
-  }).listen(port, "127.0.0.1", () => console.log(`Rehearse → dashboard http://localhost:${port}/app`));
+  }).listen(port, "127.0.0.1", () => console.log(`Backtrack → dashboard http://localhost:${port}/app`));
 }
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) startServer();

@@ -12,7 +12,7 @@ import { backtest } from "./backtest.js";
 import { brakelineLimits, FUNDS } from "./brakeline.js";
 
 // the per-position cap Brakeline will apply to this symbol, or null when Brakeline is not installed
-const guardCap = (sym) => { if (process.env.REHEARSE_IGNORE_BRAKELINE) return null; const g = brakelineLimits(); return g.found ? (FUNDS.has(sym) ? g.fund : g.stock) : null; };
+const guardCap = (sym) => { if (process.env.BACKTRACK_IGNORE_BRAKELINE) return null; const g = brakelineLimits(); return g.found ? (FUNDS.has(sym) ? g.fund : g.stock) : null; };
 
 const FILE = dataFile("strategies.json");
 const load = () => { try { return existsSync(FILE) ? JSON.parse(readFileSync(FILE, "utf8")) : []; } catch { return []; } };
@@ -70,8 +70,8 @@ export function setStatusByHuman(id, status) {
 export function remove(id) { save(load().filter((x) => x.id !== id)); return { removed: id }; }
 
 // ── paper / live ledger ─────────────────────────────────────────────────────
-// Rehearse never trades. The agent places orders (through Brakeline) and reports each fill with record_fill,
-// so Rehearse knows what is open, since when, and at what price, and can tell when to sell.
+// Backtrack never trades. The agent places orders (through Brakeline) and reports each fill with record_fill,
+// so Backtrack knows what is open, since when, and at what price, and can tell when to sell.
 import { entrySignal, rsiSeries, macdHist, sma } from "./backtest.js";
 const ledgerOf = (rec) => (rec.ledger ||= { positions: {}, fills: [] });
 

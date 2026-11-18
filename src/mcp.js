@@ -1,6 +1,6 @@
-// Rehearse MCP server (stdio): turn a strategy written in plain words into rules, backtest it on real prices,
+// Backtrack MCP server (stdio): turn a strategy written in plain words into rules, backtest it on real prices,
 // and walk it up draft → backtested → paper. Going live needs the human's click in the dashboard.
-// Rehearse never sends an order: signals are placed by the agent through Brakeline.
+// Backtrack never sends an order: signals are placed by the agent through Brakeline.
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
@@ -29,14 +29,14 @@ const TOOLS = [
   { name: "list_strategies", description: "Saved strategies with their status (draft / backtested / paper / live) and last backtest.", inputSchema: obj(), run: async () => store.list() },
   { name: "get_strategy", description: "One saved strategy: rules, original text, status and last backtest.", inputSchema: obj({ id: { type: "string" } }, ["id"]), run: async (a) => store.get(a.id) },
   { name: "promote_to_paper", description: "Move a backtested strategy to paper trading. Refused unless its last backtest passed the gate. Going LIVE is not possible from here: only the human can approve that in the dashboard.", inputSchema: obj({ id: { type: "string" } }, ["id"]), run: async (a) => store.promoteToPaper(a.id) },
-  { name: "todays_signals", description: "For a paper or live strategy: which symbols have an entry signal at the latest close (skipping ones already held), with a suggested size, take-profit and stop-loss price. Rehearse does not trade: place orders through Brakeline (paper strategies: simulated account only), then call record_fill.", inputSchema: obj({ id: { type: "string" }, equity: { type: "number", description: "account equity for sizing, default 100000" } }, ["id"]), run: async (a) => store.signals(a.id, a.equity) },
-  { name: "record_fill", description: "Tell Rehearse about a filled order for a paper or live strategy, so it can track the position and manage the exit. Use the real fill price from the broker / Brakeline.", inputSchema: obj({ id: { type: "string" }, symbol: { type: "string" }, side: { type: "string", enum: ["buy", "sell"] }, qty: { type: "number" }, price: { type: "number" }, date: { type: "string", description: "YYYY-MM-DD, default today" } }, ["id", "symbol", "side", "qty", "price"]), run: async (a) => store.recordFill(a.id, a) },
+  { name: "todays_signals", description: "For a paper or live strategy: which symbols have an entry signal at the latest close (skipping ones already held), with a suggested size, take-profit and stop-loss price. Backtrack does not trade: place orders through Brakeline (paper strategies: simulated account only), then call record_fill.", inputSchema: obj({ id: { type: "string" }, equity: { type: "number", description: "account equity for sizing, default 100000" } }, ["id"]), run: async (a) => store.signals(a.id, a.equity) },
+  { name: "record_fill", description: "Tell Backtrack about a filled order for a paper or live strategy, so it can track the position and manage the exit. Use the real fill price from the broker / Brakeline.", inputSchema: obj({ id: { type: "string" }, symbol: { type: "string" }, side: { type: "string", enum: ["buy", "sell"] }, qty: { type: "number" }, price: { type: "number" }, date: { type: "string", description: "YYYY-MM-DD, default today" } }, ["id", "symbol", "side", "qty", "price"]), run: async (a) => store.recordFill(a.id, a) },
   { name: "check_exits", description: "For every open position of a paper or live strategy: should it be sold now? Checks take profit / stop loss against the highs and lows since entry, max hold days and RSI / average exits — the same rules as the backtest. Sell through Brakeline, then record_fill.", inputSchema: obj({ id: { type: "string" } }, ["id"]), run: async (a) => store.checkExits(a.id) },
   { name: "paper_status", description: "Open positions, closed trades, realized P&L and win rate of a paper or live strategy so far — to compare with its backtest before asking the human to approve live.", inputSchema: obj({ id: { type: "string" } }, ["id"]), run: async (a) => store.paperStatus(a.id) },
 ];
 
 export async function startMcp() {
-  const server = new Server({ name: "rehearse", version: "0.1.0" }, { capabilities: { tools: {} } });
+  const server = new Server({ name: "backtrack", version: "0.1.0" }, { capabilities: { tools: {} } });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS.map(({ name, description, inputSchema }) => ({ name, description, inputSchema })) }));
   server.setRequestHandler(CallToolRequestSchema, async ({ params: { name, arguments: args = {} } }) => {
     const t = TOOLS.find((x) => x.name === name);

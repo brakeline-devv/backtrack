@@ -1,4 +1,4 @@
-// Live wireframe "blueprint" scenes for the Rehearse site (Three.js, rendered in the browser).
+// Live wireframe "blueprint" scenes for the Backtrack site (Three.js, rendered in the browser).
 //  #hero3d  : a live market — candles tick in, the strategy trades them, equity line + trade markers
 //  #stack3d : plain words → rules → prices, layers spread apart as you scroll
 //  #gate3d  : strategies walk up to the gate; most fail and drop, a few pass

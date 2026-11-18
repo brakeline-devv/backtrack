@@ -1,8 +1,8 @@
-# Rehearse · strategy lab for AI agents (working name)
+# Backtrack · strategy lab for AI agents
 
-Describe a trading strategy in plain words. Rehearse turns it into auditable rules, backtests it on ~3 years of
+Describe a trading strategy in plain words. Backtrack turns it into auditable rules, backtests it on ~3 years of
 real daily prices, and walks it up **draft → backtested → paper → live**. Only the human can approve live.
-Rehearse never trades: the agent places orders through [Brakeline](https://brakeline.trade).
+Backtrack never trades: the agent places orders through [Brakeline](https://brakeline.trade).
 
 - **Plain words in** (English or Indonesian): "Buy NVDA when it drops 5% in a week. Sell at +8% or a 4% stop loss."
   Anything it can't read is reported in `unparsed`, never guessed.
@@ -24,7 +24,7 @@ npm install
 npm start          # dashboard on http://localhost:6200/app
 npm test
 node src/cli.js "Buy QQQ when it drops 3% in 2 days, take profit 4%, stop loss 4%"
-claude mcp add rehearse -- node /path/to/backtest-loop/src/cli.js mcp
+claude mcp add backtrack -- node /path/to/backtest-loop/src/cli.js mcp
 ```
 
 Past results do not predict future returns. Not investment advice.

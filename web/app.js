@@ -1,4 +1,4 @@
-// Rehearse dashboard: describe → parse → backtest → save → promote (paper) → approve live (human only).
+// Backtrack dashboard: describe → parse → backtest → save → promote (paper) → approve live (human only).
 const $ = (s) => document.querySelector(s);
 const pct = (x, d = 1) => (x == null ? "–" : `${(x * 100).toFixed(d)}%`);
 const sgn = (x) => (x == null ? "" : x >= 0 ? "pos" : "neg");
@@ -103,7 +103,7 @@ $("#list").onclick = async (ev) => {
         <div><small>Open positions</small>${open.length ? open.map(([k, p]) => `<b>${esc(k)}</b> ${p.qty} @ ${(+p.entryPrice).toFixed(2)} since ${p.entryDate}`).join("<br>") : "none"}</div>
         <div><small>Sell now?</small>${(ex.exits || []).length ? ex.exits.map((e) => `<b>${esc(e.symbol)}</b> ${e.sell ? `<span class="neg">SELL</span>: ${esc(e.reasons.join(", "))}` : `hold (${esc(e.keepUntil)})`}`).join("<br>") : "nothing open"}</div>
         <div><small>Buy today?</small>${(sg.signals || []).map((x) => `<b>${esc(x.symbol)}</b> ${x.suggested ? `<span class="pos">BUY</span> ${x.suggested.qty} (~${usd(x.suggested.notional)})${x.sizing ? `<br><span class="hint">${esc(x.sizing)}</span>` : ""}` : x.note ? esc(x.note) : "no signal"}`).join("<br>") || esc(sg.error || "")}</div>
-      </div><p class="hint">Rehearse never trades. Your agent places these through Brakeline and reports each fill with <code>record_fill</code>.</p>`;
+      </div><p class="hint">Backtrack never trades. Your agent places these through Brakeline and reports each fill with <code>record_fill</code>.</p>`;
     $("#paper").hidden = false; return;
   }
   if (act === "paper") { const r = await post("/api/promote", { id }); if (r.error) alert(r.error); }

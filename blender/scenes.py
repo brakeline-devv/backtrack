@@ -1,4 +1,4 @@
-"""Wireframe 'blueprint' 3D assets for the Rehearse site: white hairlines + lime accents on pure black.
+"""Wireframe 'blueprint' 3D assets for the Backtrack site: white hairlines + lime accents on pure black.
 Headless:
   D:/blender.exe -b -P scenes.py -- <scene> preview <frame> <out.png>
   D:/blender.exe -b -P scenes.py -- <scene> render <out_dir/f_>

@@ -4,7 +4,7 @@ const $ = (s) => document.querySelector(s);
 const TICK = "Past results do not predict future returns /////////// Signals at the close, fills at the next open /////////// Live needs your approval /////////// ";
 $("#ticker").textContent = TICK.repeat(8);
 
-// real runs on Yahoo daily prices, 2023-11-20 → 2026-11-17 (Rehearse 0.1, default 5 bps slippage)
+// real runs on Yahoo daily prices, 2023-11-20 → 2026-11-17 (Backtrack 0.1, default 5 bps slippage)
 const EX = [
   { n: "NVDA dip buyer", q: "Buy NVDA when it drops 5% in a week. +8% target, 4% stop. 20% per trade.", ret: "+2.8%", dd: "−10.0%", tr: 72, hold: "+215%", pass: false, why: "worse return per unit of risk than holding" },
   { n: "Big 4 RSI", q: "Beli AAPL, MSFT, GOOGL dan AMZN kalau RSI di bawah 35, jual kalau naik 6% atau rugi 4%.", ret: "+5.6%", dd: "−3.1%", tr: 65, hold: "+77%", pass: false, why: "1.82 vs 2.91 return ÷ worst drop" },

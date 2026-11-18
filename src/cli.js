@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// rehearse            → MCP server on stdio (what Claude / Cursor start)
-// rehearse dashboard  → dashboard on http://localhost:6200/app
-// rehearse "<text>"   → parse + backtest a strategy in the terminal
+// backtrack            → MCP server on stdio (what Claude / Cursor start)
+// backtrack dashboard  → dashboard on http://localhost:6200/app
+// backtrack "<text>"   → parse + backtest a strategy in the terminal
 const cmd = process.argv[2] ?? "mcp";
 if (cmd === "mcp") (await import("./mcp.js")).startMcp();
 else if (cmd === "dashboard") (await import("./server.js")).startServer();
