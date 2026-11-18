@@ -1,6 +1,6 @@
 # Backtrack · strategy lab for AI agents
 
-**Test the trade before you risk it.** · [Website](https://backtrack.trade) · [npm](https://www.npmjs.com/package/backtrack-mcp) · works with [Brakeline](https://brakeline.trade) and [Ballast](https://ballastmcp.com)
+**Test the trade before you risk it.** · [Website](https://backtrackmcp.trade) · [npm](https://www.npmjs.com/package/backtrack-mcp) · works with [Brakeline](https://brakeline.trade) and [Ballast](https://ballastmcp.com)
 
 Describe a trading strategy in plain words. Backtrack turns it into auditable rules, backtests it on ~3 years of
 real daily prices, and walks it up **draft → backtested → paper → live**. Only the human can approve live.
