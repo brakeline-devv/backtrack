@@ -12,7 +12,8 @@ h2 { font-size: clamp(26px, 2.8vw, 40px); }
 .center { text-align: center; margin-left: auto; margin-right: auto; }
 .btn { display: inline-flex; align-items: center; justify-content: center; min-width: 170px; height: 40px; padding: 0 18px; border: 1px solid var(--line); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; transition: background .2s, color .2s; }
 .btn:hover { background: #fff; color: #000; }
-.mk { display: inline-block; width: 11px; height: 11px; background: var(--lime); transform: skewX(-14deg); box-shadow: 0 0 12px rgba(200,255,46,.6); }
+.mk { display: inline-block; width: 26px; height: 26px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(200,255,46,.35)); }
+.node .mk { width: 22px; height: 22px; }
 
 /* nav */
 .nav { position: fixed; z-index: 30; inset: 0 0 auto 0; height: 56px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 40px; background: linear-gradient(#000 60%, rgba(0,0,0,0)); }
