@@ -137,7 +137,7 @@ footer { border-top: 3px double var(--line); padding: 26px 70px 0; }
 /* live 3D canvases */
 .three { position: relative; }
 .three canvas { display: block; width: 100% !important; height: 100% !important; -webkit-mask-image: radial-gradient(ellipse 80% 78% at 50% 48%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 80% 78% at 50% 48%, #000 62%, transparent 100%); }
-#hero3d { height: min(78vh, 680px); cursor: grab; }
+#hero3d { height: min(78vh, 680px); }
 .stack-art { height: 560px; }
 #stack3d { position: absolute; inset: 0; }
 #gate3d { height: 470px; }
@@ -150,3 +150,5 @@ footer { border-top: 3px double var(--line); padding: 26px 70px 0; }
 .hud b { color: #fff; font-weight: 500; } .hud b.l { color: var(--lime); }
 .hud.gate { bottom: 2px; }
 @media (max-width: 960px) { #hero3d { height: 420px; } .stack-art { height: 400px; } #gate3d { height: 360px; } .hud { font-size: 9.5px; gap: 10px; } }
+
+.three canvas { pointer-events: none; }

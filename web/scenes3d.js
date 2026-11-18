@@ -41,8 +41,7 @@ function stage(el, setup) {
   const api = setup(ctx);
   const size = () => { const w = el.clientWidth, h = el.clientHeight; r.setSize(w, h, false); api.resize(w, h); };
   new ResizeObserver(size).observe(el); size();
-  el.addEventListener("pointermove", (e) => { const b = el.getBoundingClientRect(); ctx.mouse.x = (e.clientX - b.left) / b.width - 0.5; ctx.mouse.y = (e.clientY - b.top) / b.height - 0.5; });
-  el.addEventListener("pointerleave", () => { ctx.mouse.x = ctx.mouse.y = 0; });
+  // no mouse interaction: the scenes animate on their own (ctx.mouse stays 0)
   let on = false, last = performance.now(), t = 0;
   new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) { last = performance.now(); requestAnimationFrame(loop); } }, { threshold: 0.01 }).observe(el);
   function loop(now) {
