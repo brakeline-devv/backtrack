@@ -1,1 +1,130 @@
-<!doctype html><meta http-equiv="refresh" content="0; url=app">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rehearse · Test the strategy before it touches real money</title>
+<meta name="description" content="Describe a trading strategy in plain words. Rehearse turns it into rules, backtests it on real prices, and only lets it go live after paper trading and your approval. An MCP server for AI agents.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<header class="nav">
+  <nav class="left"><a href="#how">// How it works</a><a href="#gate">// The gate</a><a href="#examples">// Examples</a><a href="#join">// Install</a></nav>
+  <a class="brand" href="#top"><span class="mk"></span>rehearse</a>
+  <nav class="right"><a class="chip" href="#join">.open {DASHBOARD}</a><a class="chip" href="#join">.add {CLAUDE}</a></nav>
+</header>
+
+<aside class="rail" aria-hidden="true"><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span></aside>
+
+<main>
+  <!-- 01 -->
+  <section class="s1" id="top" data-n="1">
+    <div class="copy">
+      <small class="num">01</small>
+      <h1>Rehearse the<br>trade before<br>you risk it</h1>
+      <p>Describe a strategy in plain words. Rehearse turns it into rules, tests them on three years of real prices, and only lets your AI agent trade it after paper trading and your approval.</p>
+      <div class="btns"><a class="btn" href="#how">How it works</a><a class="btn" href="#join">Add to Claude</a></div>
+    </div>
+    <div class="art hero-art three" id="hero3d"></div>
+    <div class="node"><span class="mk"></span></div>
+  </section>
+
+  <div class="ticker"><div class="track" id="ticker"></div></div>
+
+  <!-- 02 -->
+  <section class="s2" id="how" data-n="2">
+    <svg class="path p2" viewBox="0 0 1000 220" preserveAspectRatio="none"><path d="M500 0 V60 H760 V220"/></svg>
+    <div class="art stack-art">
+      <div class="three" id="stack3d"></div>
+      <span class="lbl l1"><b>01</b>Plain words</span>
+      <span class="lbl l2"><b>02</b>Rules · strategy.md</span>
+      <span class="lbl l3"><b>03</b>3 years of real prices</span>
+    </div>
+    <div class="copy">
+      <small class="num">02</small>
+      <h2>From a sentence<br>to a tested strategy</h2>
+      <ul class="bul">
+        <li>English or Indonesian</li>
+        <li>Unclear text is flagged, never guessed</li>
+        <li>Signals at the close, fills at the next open</li>
+        <li>Stop loss before take profit</li>
+        <li>Slippage on every fill</li>
+        <li>Against buy &amp; hold and the S&amp;P 500</li>
+      </ul>
+    </div>
+    <p class="cap">/ Honest backtesting /</p>
+  </section>
+
+  <!-- 03 -->
+  <section class="s3" id="gate" data-n="3">
+    <div class="dia"><span>03</span></div>
+    <h2 class="rule-h">Most strategies don't pass the gate</h2>
+    <p class="lead">A strategy moves draft → backtested → paper → live. It only reaches paper if it beats simply holding, risk for risk. Only you can approve live.</p>
+    <div class="gate-wrap">
+      <div class="feat l">
+        <div><b>Parse</b><span>Plain words into rules you can read in strategy.md and risk.md.</span></div>
+        <div><b>Backtest</b><span>~3 years of daily prices, next-open fills, slippage, gap-aware stops.</span></div>
+        <div><b>The gate</b><span>10+ trades, drawdown under your limit, profit, and better return per unit of risk than holding.</span></div>
+      </div>
+      <div class="art gate-art three" id="gate3d"></div>
+      <div class="feat r">
+        <div><b>Paper</b><span>Daily entry signals, sized to your Brakeline caps. Fills recorded per strategy.</span></div>
+        <div><b>Check exits</b><span>Take profit, stop loss, max hold and RSI exits on every open position.</span></div>
+        <div><b>Live: human only</b><span>The agent has no tool to go live. You approve it, and Brakeline guards every order.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="s4" id="examples" data-n="4">
+    <div class="dia"><span>04</span></div>
+    <div class="two">
+      <div><small class="num">04</small><h2>Don't just backtest.<br>Rehearse.</h2></div>
+      <div><p>These are real runs on real prices, Nov 2023 to Nov 2026. Most simple rules lose to buy &amp; hold in a market that went up. Rehearse says so before your money finds out.</p><a class="btn" href="#join">Try your own {dashboard}</a></div>
+    </div>
+    <div class="tabs" id="tabs"><button class="on" data-f="all">All</button><button data-f="pass">Passed the gate</button><button data-f="fail">Stayed in the lab</button></div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- 05 -->
+  <section class="s5" data-n="5">
+    <div class="dia"><span>05</span></div>
+    <h2 class="center">A backtest should be<br>allowed to say no</h2>
+    <div class="mission">
+      <div class="bar"><span>////////////////////////</span><b>// Our rule //</b><span>////////////////////////</span></div>
+      <p>Strategy tools usually flatter you: perfect fills, no slippage, results measured against nothing.</p>
+      <p>Rehearse fills every signal at the next open, assumes the stop hits before the target, and puts every result next to simply holding the same stocks.</p>
+      <p>Most ideas don't survive that. That is the point: you find out on paper, not with your savings.</p>
+      <p>And when one does survive, it still has to earn its way through paper trading. Live is your decision, never the agent's.</p>
+    </div>
+    <div class="node"><span class="mk"></span></div>
+  </section>
+
+  <!-- 06 -->
+  <section class="s6" id="join" data-n="6">
+    <h2 class="center">Put your strategy on stage</h2>
+    <p class="lead center">Runs on your computer. Your strategies and positions never leave it.</p>
+    <svg class="fork" viewBox="0 0 600 70" preserveAspectRatio="none"><path d="M300 0 V30 M75 70 V30 H525 V70"/></svg>
+    <div class="join">
+      <div><h3>Traders</h3><p>Open the strategy lab: write a rule, see the curve, save it.</p><pre>npm install &amp;&amp; npm start
+# localhost:6200/app</pre></div>
+      <div><h3>Agent builders</h3><p>Give Claude or Cursor eleven tools, from parse to check exits.</p><pre>claude mcp add rehearse -- node ./src/cli.js mcp
+claude mcp add brakeline -- npx -y brakeline</pre></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot"><a class="brand" href="#top"><span class="mk"></span>rehearse</a>
+    <nav><a href="#how">// How it works</a><a href="#gate">// The gate</a><a href="https://brakeline.trade">// Brakeline</a><a href="https://ballastmcp.com">// Ballast</a></nav></div>
+  <p class="disc">Backtests use past prices. Past results do not predict future returns. Not investment advice. Not affiliated with Robinhood.</p>
+  <div class="hatch"></div>
+</footer>
+<script src="site.js"></script>
+<script type="module" src="scenes3d.js"></script>
+</body>
+</html>

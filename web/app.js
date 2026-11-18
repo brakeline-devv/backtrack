@@ -39,9 +39,9 @@ function chart(r) {
   const X = (i, n) => 50 + (i / (n - 1)) * 935, Y = (v) => 300 - ((v - lo) / (hi - lo)) * 280;
   const path = (c) => c.map((p, i) => `${i ? "L" : "M"}${X(i, c.length).toFixed(1)} ${Y(p.v).toFixed(1)}`).join("");
   let g = "";
-  for (let t = 0; t <= 4; t++) { const v = lo + ((hi - lo) * t) / 4; g += `<line x1="50" x2="985" y1="${Y(v)}" y2="${Y(v)}" stroke="#1b282c"/><text x="44" y="${Y(v) + 4}" text-anchor="end">${(v / 1000).toFixed(0)}k</text>`; }
+  for (let t = 0; t <= 4; t++) { const v = lo + ((hi - lo) * t) / 4; g += `<line x1="50" x2="985" y1="${Y(v)}" y2="${Y(v)}" stroke="#262626"/><text x="44" y="${Y(v) + 4}" text-anchor="end">${(v / 1000).toFixed(0)}k</text>`; }
   for (const [i, d] of [[0, S[0].d], [Math.floor(S.length / 2), S[Math.floor(S.length / 2)].d], [S.length - 1, S.at(-1).d]]) g += `<text x="${X(i, S.length)}" y="318" text-anchor="${i ? (i === S.length - 1 ? "end" : "middle") : "start"}">${d}</text>`;
-  $("#chart").innerHTML = g + (P.length ? `<path d="${path(P)}" fill="none" stroke="#6b7d7b" stroke-width="1.5"/>` : "") + (H.length ? `<path d="${path(H)}" fill="none" stroke="#9b7bff" stroke-width="1.8"/>` : "") + `<path d="${path(S)}" fill="none" stroke="#3ee6c4" stroke-width="2.6"/>`;
+  $("#chart").innerHTML = g + (P.length ? `<path d="${path(P)}" fill="none" stroke="#6b7d7b" stroke-width="1.5"/>` : "") + (H.length ? `<path d="${path(H)}" fill="none" stroke="#9b7bff" stroke-width="1.8"/>` : "") + `<path d="${path(S)}" fill="none" stroke="#c8ff2e" stroke-width="2.6"/>`;
 }
 
 function showResult(r) {
