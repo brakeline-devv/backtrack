@@ -57,10 +57,6 @@ function stage(el, setup) {
 stage(document.getElementById("hero3d"), ({ scene, mouse, el }) => {
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
   const world = new THREE.Group(); scene.add(world);
-  world.add(grid(26, 26, 0.18));
-  const disc = ring(7.2, WHITE, 0.55); world.add(disc);
-  const orbits = [ring(9.2, WHITE, 0.25), ring(10.2, WHITE, 0.18)];
-  orbits[0].rotation.set(0.42, 0, 0.1); orbits[1].rotation.set(-0.3, 0, -0.18); orbits.forEach((o) => { o.position.y = 3; world.add(o); });
 
   const N = 30, GAP = 0.34, STEP = 0.6; // candles, spacing, seconds per new candle
   const chart = new THREE.Group(); chart.position.set(0, 0.3, 0); world.add(chart);
@@ -167,7 +163,6 @@ stage(document.getElementById("hero3d"), ({ scene, mouse, el }) => {
       // camera: slow orbit + mouse parallax
       const a = Math.sin(t * 0.12) * 0.28 + mouse.x * 0.45;
       camera.position.set(Math.sin(a) * dist, dist * 0.3 - mouse.y * 2.0, Math.cos(a) * dist); camera.lookAt(0, 3.0, 0);
-      orbits[0].rotation.y = t * 0.05; orbits[1].rotation.y = -t * 0.035;
       const wins = trades.filter((x) => x.win).length;
       hud.innerHTML = `<span>SIM · LIVE · 1 CANDLE = 1 DAY</span><span>STRATEGY: BUY THE 4% DIP · +6% / −4%</span><span>TRADES <b>${trades.length}</b> · WIN <b>${trades.length ? Math.round((wins / trades.length) * 100) : 0}%</b> · EQUITY <b class="l">${((equity - 1) * 100 >= 0 ? "+" : "")}${((equity - 1) * 100).toFixed(1)}%</b></span>`;
     },
@@ -179,7 +174,6 @@ stage(document.getElementById("stack3d"), ({ scene, el }) => {
   scene.fog = null;
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -50, 50);
   const root = new THREE.Group(); scene.add(root);
-  const g = grid(14, 14, 0.2); root.add(g);
   // layer 3: price blocks
   const blocks = [], limeEdge = lineMat(LIME, 1), whiteEdge = lineMat(WHITE, 0.85);
   for (let i = 0; i < 9; i++) for (let j = 0; j < 6; j++) { const b = wbox(whiteEdge); b.position.set(-3.6 + i * 0.9, 0, -2.25 + j * 0.9); b.scale.set(0.7, 0.3, 0.7); root.add(b); blocks.push({ b, i, j }); }
@@ -248,7 +242,6 @@ stage(document.getElementById("gate3d"), ({ scene, mouse, el }) => {
   scene.fog = new THREE.Fog(0x000000, 12, 30);
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
   const root = new THREE.Group(); scene.add(root);
-  root.add(grid(40, 40, 0.2));
   const gate = new THREE.Group(); root.add(gate);
   for (const s of [-1, 1]) { const p = wbox(lineMat(WHITE, 0.95)); p.scale.set(0.45, 3.6, 0.45); p.position.set(0, 1.8, s * 1.6); gate.add(p); const f = wbox(lineMat(WHITE, 0.8)); f.scale.set(0.8, 0.25, 0.8); f.position.set(0, 0.125, s * 1.6); gate.add(f); }
   const beam = wbox(lineMat(WHITE, 0.95)); beam.scale.set(0.5, 0.4, 4.1); beam.position.y = 3.8; gate.add(beam);
@@ -263,21 +256,44 @@ stage(document.getElementById("gate3d"), ({ scene, mouse, el }) => {
   const path = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-14, 0.01, 0), new THREE.Vector3(14, 0.01, 0)]), new THREE.LineDashedMaterial({ color: WHITE, dashSize: 0.25, gapSize: 0.2, transparent: true, opacity: 0.6 }));
   path.computeLineDistances(); root.add(path);
   const passed = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0.02, 0), new THREE.Vector3(14, 0.02, 0)]), new THREE.LineBasicMaterial({ color: LIME, transparent: true, opacity: 0.8 })); root.add(passed);
-  // candidate strategies
-  const NAMES = ["NVDA DIP", "BIG 4 RSI", "QQQ PULLBACK", "SECTOR RSI", "GOLDEN X", "CRYPTO RSI", "MEME MOMO", "TSLA BREAKOUT", "SPY 200D", "AMD MACD"];
+  // candidate strategies, as coins rolling up to the gate (illustrative; pass/fail follows the real example runs)
+  const ASSETS = [
+    { sym: "N", tk: "NVDA", name: "NVDA DIP", pass: false }, { sym: "₿", tk: "BTC", name: "BTC RSI", pass: true },
+    { sym: "A", tk: "AAPL", name: "BIG 4 RSI", pass: false }, { sym: "Ξ", tk: "ETH", name: "ETH RSI", pass: true },
+    { sym: "T", tk: "TSLA", name: "TSLA BREAKOUT", pass: false }, { sym: "Q", tk: "QQQ", name: "QQQ PULLBACK", pass: false },
+    { sym: "◎", tk: "SOL", name: "SOL MOMENTUM", pass: false }, { sym: "X", tk: "XLV", name: "SECTOR RSI", pass: true },
+    { sym: "Ð", tk: "DOGE", name: "DOGE PUMP", pass: false }, { sym: "S", tk: "SPY", name: "GOLDEN CROSS", pass: false },
+  ];
+  const R = 0.62, TH = 0.18;
+  const coinGeo = new THREE.CylinderGeometry(R, R, TH, 64); coinGeo.rotateX(Math.PI / 2);
+  const coinEdges = new THREE.EdgesGeometry(coinGeo, 30), faceGeo = new THREE.CircleGeometry(R * 0.98, 64);
+  const drawFace = (x, a, col) => {
+    x.strokeStyle = col; x.lineWidth = 7; x.beginPath(); x.arc(128, 128, 112, 0, Math.PI * 2); x.stroke();
+    x.lineWidth = 3; x.beginPath(); x.arc(128, 128, 92, 0, Math.PI * 2); x.stroke();
+    x.fillStyle = col; x.textAlign = "center"; x.textBaseline = "middle";
+    x.font = `700 ${a.sym.length > 1 ? 70 : 104}px 'Space Grotesk', 'Segoe UI Symbol', sans-serif`; x.fillText(a.sym, 128, 118);
+    x.font = "600 26px 'JetBrains Mono', monospace"; x.fillText(a.tk, 128, 186);
+  };
   const pool = Array.from({ length: 7 }, () => {
-    const m = lineMat(WHITE, 0.95), b = wbox(m); b.scale.setScalar(0.7); root.add(b); b.visible = false;
-    const lt = textTexture(256, 64, (x, txt, col) => { x.fillStyle = col; x.font = "500 28px 'JetBrains Mono', monospace"; x.textAlign = "center"; x.fillText(txt, 128, 40); });
-    const lab = new THREE.Sprite(new THREE.SpriteMaterial({ map: lt.tex, transparent: true, depthTest: false })); lab.scale.set(2.2, 0.55, 1); root.add(lab); lab.visible = false;
-    return { b, m, lab, lt, alive: false };
+    const g = new THREE.Group(); root.add(g); g.visible = false;
+    g.add(new THREE.Mesh(coinGeo, blackMat));
+    const m = lineMat(WHITE, 0.95); g.add(new THREE.LineSegments(coinEdges, m));
+    const ft = textTexture(256, 256, drawFace);
+    const fm = new THREE.MeshBasicMaterial({ map: ft.tex, transparent: true });
+    const f1 = new THREE.Mesh(faceGeo, fm); f1.position.z = TH / 2 + 0.002; g.add(f1);
+    const f2 = new THREE.Mesh(faceGeo, fm); f2.position.z = -TH / 2 - 0.002; f2.rotation.y = Math.PI; g.add(f2);
+    const lt = textTexture(320, 64, (x, txt, col) => { x.fillStyle = col; x.font = "500 26px 'JetBrains Mono', monospace"; x.textAlign = "center"; x.fillText(txt, 160, 40); });
+    const lab = new THREE.Sprite(new THREE.SpriteMaterial({ map: lt.tex, transparent: true, depthTest: false })); lab.scale.set(2.6, 0.52, 1); root.add(lab); lab.visible = false;
+    return { g, m, fm, ft, lab, lt, alive: false };
   });
   let spawnT = 0, k = 0, tested = 0, ok = 0, last = "";
   const hud = document.createElement("div"); hud.className = "hud gate"; el.appendChild(hud);
   const spawn = () => {
     const p = pool.find((q) => !q.alive); if (!p) return;
-    const pass = k % 4 === 3; // about 1 in 4 passes
-    Object.assign(p, { alive: true, x: -8.5, pass, decided: false, vy: 0, y: 0.36, fade: 1, name: NAMES[k % NAMES.length] }); k++;
-    p.m.color.setHex(WHITE); p.m.opacity = 0.95; p.b.visible = p.lab.visible = true; p.lt.redraw(p.name, "#ffffff");
+    const a = ASSETS[k++ % ASSETS.length];
+    Object.assign(p, { alive: true, x: -8.5, a, pass: a.pass, decided: false, vy: 0, y: R, fade: 1, tip: 0 });
+    p.m.color.setHex(WHITE); p.ft.redraw(a, "#ffffff"); p.lt.redraw(a.name, "#ffffff");
+    p.g.visible = p.lab.visible = true; p.g.rotation.set(0, 0, 0);
   };
   return {
     camera,
@@ -287,14 +303,17 @@ stage(document.getElementById("gate3d"), ({ scene, mouse, el }) => {
       scan.position.y = 1.8 + Math.sin(t * 3) * 1.6;
       for (const p of pool) {
         if (!p.alive) continue;
-        if (!p.decided && p.x > -0.6) { p.decided = true; tested++; if (p.pass) ok++; last = p.name;
-          p.m.color.setHex(p.pass ? LIME : RED); p.lt.redraw(p.pass ? `${p.name} · PASS` : `${p.name} · FAIL`, p.pass ? "#c8ff2e" : "#ff4d5e");
-          signT.redraw(p.pass ? "PASS" : "FAIL", p.pass ? "#c8ff2e" : "#ff4d5e"); setTimeout(() => signT.redraw("THE GATE", "#c8ff2e"), 700); }
-        if (p.decided && !p.pass) { p.vy -= 9 * dt; p.y += p.vy * dt; p.x += 0.6 * dt; p.b.rotation.z -= 2 * dt; p.fade -= 0.9 * dt; }
-        else p.x += 2.6 * dt;
-        p.b.position.set(p.x, p.y, 0); p.lab.position.set(p.x, p.y + 0.95, 0);
-        p.m.opacity = Math.max(0, p.fade) * 0.95; p.lab.material.opacity = Math.max(0, p.fade);
-        if (p.x > 13 || p.fade <= 0) { p.alive = false; p.b.visible = p.lab.visible = false; p.b.rotation.z = 0; }
+        if (!p.decided && p.x > -0.9) { p.decided = true; tested++; if (p.pass) ok++; last = p.a.name;
+          const col = p.pass ? "#c8ff2e" : "#ff4d5e";
+          p.m.color.setHex(p.pass ? LIME : RED); p.ft.redraw(p.a, col); p.lt.redraw(`${p.a.name} · ${p.pass ? "PASS" : "FAIL"}`, col);
+          signT.redraw(p.pass ? "PASS" : "FAIL", col); setTimeout(() => signT.redraw("THE GATE", "#c8ff2e"), 700); }
+        if (p.decided && !p.pass) { // bounces off the gate, tips over and fades
+          p.tip = Math.min(Math.PI / 2, p.tip + 3 * dt); p.x -= 0.5 * dt; p.y = Math.max(TH / 2, R * Math.cos(p.tip) + (TH / 2) * Math.sin(p.tip)); p.fade -= 0.7 * dt;
+          p.g.rotation.x = p.tip;
+        } else { p.x += 2.6 * dt; p.g.rotation.z = -p.x / R; } // rolls
+        p.g.position.set(p.x, p.y, 0); p.lab.position.set(p.x, R * 2 + 0.45, 0);
+        const o = Math.max(0, p.fade); p.m.opacity = o * 0.95; p.fm.opacity = o; p.lab.material.opacity = o;
+        if (p.x > 11 || p.fade <= 0) { p.alive = false; p.g.visible = p.lab.visible = false; }
       }
       const a = -0.55 + Math.sin(t * 0.15) * 0.18 + mouse.x * 0.4;
       camera.position.set(Math.sin(a) * 12.5, 4.6 - mouse.y * 1.6, Math.cos(a) * 12.5); camera.lookAt(0, 2.0, 0);
