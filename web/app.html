@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rehearse · Strategy lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400..800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="bar">
+  <a class="logo" href="#"><span class="mark"></span><span>Rehearse</span><span class="tag">strategy lab</span></a>
+  <span class="status" id="status">rehearse a strategy before it touches real money</span>
+</header>
+
+<main class="wrap">
+  <section class="card write">
+    <h2>1 · Describe the strategy <small>plain English or Indonesian</small></h2>
+    <textarea id="text" spellcheck="false">Buy NVDA when it drops 5% in a week. Sell at +8% take profit or a 4% stop loss. 20% of equity per trade.</textarea>
+    <div class="examples" id="examples"></div>
+    <div class="row"><button class="primary" id="run">Backtest it</button><span class="hint">~3 years of real daily prices · signals at the close, fills at the next open · 5 bps slippage</span></div>
+  </section>
+
+  <section class="card" id="rulesCard" hidden>
+    <h2>2 · What it understood <small>check this before trusting the numbers</small></h2>
+    <div class="rules" id="rules"></div>
+    <div class="warn" id="unparsed" hidden></div>
+  </section>
+
+  <section id="result" hidden>
+    <div class="kpis" id="kpis"></div>
+    <div class="card">
+      <h2>Equity curve <small id="period"></small></h2>
+      <svg id="chart" class="chart" viewBox="0 0 1000 320" preserveAspectRatio="none"></svg>
+      <div class="legend"><span><i class="s"></i>strategy</span><span><i class="h"></i>buy &amp; hold</span><span><i class="p"></i>S&amp;P 500</span></div>
+    </div>
+    <div class="card verdict" id="verdict"></div>
+    <div class="card">
+      <h2>Trades <small id="tradeNote"></small></h2>
+      <div class="scroll"><table id="trades"></table></div>
+    </div>
+    <div class="card save">
+      <h2>3 · Save &amp; promote</h2>
+      <p class="hint">Saving writes <code>strategy.md</code> and <code>risk.md</code>. A strategy that passes the gate can move to <b>paper</b>. Only you can approve <b>live</b>, here; the agent has no tool for it, and live orders still go through <b>Brakeline</b>.</p>
+      <div class="row"><button class="primary" id="save">Save strategy</button><span class="hint" id="saveMsg"></span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Saved strategies <small>draft → backtested → paper → live</small></h2>
+    <div class="scroll"><table id="list"></table></div>
+    <div id="paper" class="paper" hidden></div>
+  </section>
+
+  <p class="foot">Backtests use past prices. Past results do not predict future returns. Not investment advice.</p>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>
