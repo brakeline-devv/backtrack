@@ -80,3 +80,15 @@ test("volume spike fires only on a real spike", async () => {
   assert.equal(entrySignal({ type: "volume_spike", mult: 2, days: 20 }, new Array(30).fill(1), 29, {}, { vol }), true);
   assert.equal(entrySignal({ type: "volume_spike", mult: 3, days: 20 }, new Array(30).fill(1), 29, {}, { vol }), false);
 });
+
+test("parser reads shorthand exits: N% target, max N days, 8% / 4%, sell at +N%, N-day average", () => {
+  const a = parse("Buy XLE when RSI is below 30. 5% target, 5% stop, max 20 days.").strategy.exit;
+  assert.deepEqual([a.takeProfitPct, a.stopLossPct, a.maxHoldDays], [5, 5, 20]);
+  const b = parse("Buy QQQ when it drops 3% in 2 days and above the 200-day average. 4% / 4%.");
+  assert.deepEqual([b.strategy.exit.takeProfitPct, b.strategy.exit.stopLossPct], [4, 4]);
+  assert.ok(b.strategy.entry.all.some((e) => e.type === "above_sma" && e.days === 200));
+  assert.equal(parse("Buy NVDA when it drops 5% in a week. Sell at +8%.").strategy.exit.takeProfitPct, 8);
+  const c = parse("Buy SPY when the 50-day average crosses above the 200-day, stop at 8%.");
+  assert.deepEqual(c.strategy.entry.all[0], { type: "sma_cross_up", fast: 50, slow: 200 });
+  assert.equal(c.unparsed.length, 0);
+});

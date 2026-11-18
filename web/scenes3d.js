@@ -7,6 +7,8 @@ import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
 
 const WHITE = 0xffffff, LIME = 0xc8ff2e, RED = 0xff4d5e;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const CAPTURE = new URLSearchParams(location.search).has("capture");
+if (CAPTURE) window.__step = (dt, n = 1) => { for (let i = 0; i < n; i++) (window.__stages || []).forEach((f) => f(dt)); };
 const lineMat = (color = WHITE, opacity = 0.9) => new THREE.LineBasicMaterial({ color, transparent: true, opacity });
 const blackMat = new THREE.MeshBasicMaterial({ color: 0x000000, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
 const UNIT = new THREE.BoxGeometry(1, 1, 1), UNIT_EDGES = new THREE.EdgesGeometry(UNIT);
@@ -43,6 +45,8 @@ function stage(el, setup) {
   new ResizeObserver(size).observe(el); size();
   // no mouse interaction: the scenes animate on their own (ctx.mouse stays 0)
   let on = false, last = performance.now(), t = 0;
+  // capture mode (?capture): no clock, the recorder steps every scene with window.__step(dt) for smooth frames
+  if (CAPTURE) { (window.__stages ||= []).push((dt) => { t += dt; api.tick(t, dt); r.render(scene, api.camera); }); return; }
   new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) { last = performance.now(); requestAnimationFrame(loop); } }, { threshold: 0.01 }).observe(el);
   function loop(now) {
     if (!on) return;
@@ -208,7 +212,7 @@ stage(document.getElementById("stack3d"), ({ scene, el }) => {
     tick(t) {
       // spread follows how far the section has scrolled into view
       const b = el.getBoundingClientRect(), p = Math.min(1, Math.max(0, (innerHeight - b.top) / (innerHeight + b.height * 0.2)));
-      spread += (p - spread) * 0.08;
+      spread += ((window.__spread ?? p) - spread) * 0.08;
       const gap = 2.0 + spread * 1.6;
       slab.position.y = 0.6 + gap + 0.06 * Math.sin(t * 1.3);
       card.position.set(0.2, slab.position.y + gap * 0.9 + 0.1 * Math.sin(t * 1.1 + 1), 0.2);

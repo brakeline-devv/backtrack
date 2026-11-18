@@ -19,7 +19,7 @@ const STOP = new Set(["RSI", "SMA", "MA", "EMA", "MACD", "AVG", "VOL", "AND", "O
 const num = (s) => Number(String(s).replace(",", "."));
 const toDays = (n, unit) => (/week|minggu|pekan/i.test(unit || "") ? n * 5 : /month|bulan/i.test(unit || "") ? n * 21 : n);
 
-const EXIT_WORDS = /\b(sell|exit|close|take\s*profit|tp|stop|sl|cut|hold|keep|jual|tahan|rugi|untung|profit|loss)\b/i;
+const EXIT_WORDS = /\b(sell|exit|close|take\s*profit|tp|target|stop|sl|cut|hold|keep|jual|tahan|rugi|untung|profit|loss)\b|\b(?:max(?:imum)?|maks(?:imal)?)\s*\d+\s*(?:trading\s*)?(?:days?|d|weeks?|hari|minggu)\b/i;
 const N = String.raw`(\d+(?:[.,]\d+)?)`;
 const UNIT = "(day|days|d|week|weeks|month|months|hari|minggu|pekan|bulan)";
 
@@ -40,10 +40,13 @@ export function parse(text) {
     any(String.raw`${N}\s*%\s*(?:of\s*(?:the\s*)?(?:account|equity|portfolio|capital)|per\s*(?:trade|position)|dari\s*(?:modal|akun|portofolio)|per\s*(?:posisi|trade))`, (r) => (out.risk.positionPct = num(r[1])));
     any(String.raw`(?:max(?:imum)?|at most|maks(?:imal)?|paling banyak)\s*(\d+)\s*(?:open\s*)?(?:positions?|posisi)`, (r) => (out.risk.maxPositions = num(r[1])));
 
+    // shorthand "8% / 4%" = take profit / stop loss
+    const tpsl = new RegExp(String.raw`^\+?${N}\s*%\s*/\s*-?${N}\s*%$`).exec(c);
+    if (tpsl) { out.exit.takeProfitPct = num(tpsl[1]); out.exit.stopLossPct = num(tpsl[2]); continue; }
     if (EXIT_WORDS.test(c)) {
-      any(String.raw`(?:take\s*profit|tp|profit|untung|up|naik|gains?|rises?)\s*(?:at|of|di|sebesar|by)?\s*\+?${N}\s*%|\+?${N}\s*%\s*(?:take\s*profit|tp|profit|gain|untung)`, (r) => (out.exit.takeProfitPct = num(r[1] ?? r[2])));
+      any(String.raw`(?:take\s*profit|tp|profit|target|untung|up|naik|gains?|rises?|sell\s*at|jual\s*di)\s*(?:at|of|di|sebesar|by)?\s*\+${N}\s*%|(?:take\s*profit|tp|profit|target|untung|up|naik|gains?|rises?)\s*(?:at|of|di|sebesar|by)?\s*\+?${N}\s*%|\+?${N}\s*%\s*(?:take\s*profit|tp|profit|target|gain|untung)`, (r) => (out.exit.takeProfitPct = num(r[1] ?? r[2] ?? r[3])));
       any(String.raw`(?:stop\s*(?:loss|out)?|sl|cut(?:\s*loss)?|loss(?:\s*of)?|loses?|down|falls?|drops?|rugi|turun)\s*(?:at|of|di|sebesar|by)?\s*-?${N}\s*%|-?${N}\s*%\s*(?:stop(?:\s*loss)?|sl|loss|rugi)`, (r) => (out.exit.stopLossPct = num(r[1] ?? r[2])));
-      any(String.raw`(?:hold|keep|tahan)\s*(?:for\s*)?(?:at\s*most|max(?:imum)?|up\s*to|paling\s*lama|maks(?:imal)?)?\s*(\d+)\s*${UNIT}`, (r) => (out.exit.maxHoldDays = toDays(num(r[1]), r[2])));
+      any(String.raw`(?:(?:hold|keep|tahan)\s*(?:for\s*)?(?:at\s*most|max(?:imum)?|up\s*to|paling\s*lama|maks(?:imal)?)?|max(?:imum)?|maks(?:imal)?)\s*(\d+)\s*(?:trading\s*)?${UNIT}`, (r) => (out.exit.maxHoldDays = toDays(num(r[1]), r[2])));
       any(String.raw`rsi\s*(?:\(?(\d+)\)?)?\s*(?:is\s*)?(?:above|over|>|diatas|di atas)\s*(\d+)`, (r) => (out.exit.rsiAbove = num(r[2])));
     } else {
       any(String.raw`(?:drops?|falls?|down|dips?|turun|jatuh|anjlok)\s*(?:by\s*)?${N}\s*%\s*(?:in|within|over|dalam|selama)?\s*(a|one|satu|\d+)?\s*${UNIT}?`,
@@ -54,11 +57,11 @@ export function parse(text) {
       any(String.raw`rsi\s*(?:\(?(\d+)\)?)?\s*(?:is\s*)?(?:above|over|>|diatas|di atas)\s*(\d+)`, (r) => out.entry.all.push({ type: "rsi_above", value: num(r[2]), period: num(r[1] || 14) }));
       any(String.raw`macd\s*(?:line\s*)?(?:crosses?|memotong|cross)\s*(?:above|over|up|ke atas|di atas)|macd\s*(?:bullish|golden)\s*cross`, () => out.entry.all.push({ type: "macd_cross_up" }));
       any(String.raw`volume\s*(?:is\s*)?(?:at\s*least\s*)?(\d+(?:[.,]\d+)?)\s*(?:x|×|times|kali)\s*(?:the\s*)?(?:(\d+)\s*-?\s*(?:day|hari)\s*)?(?:average|avg|rata-rata)?|(\d+(?:[.,]\d+)?)\s*(?:x|×|times|kali)\s*(?:the\s*)?(?:average\s*)?volume`, (r) => out.entry.all.push({ type: "volume_spike", mult: num(r[1] ?? r[3]), days: num(r[2] || 20) }));
-      const cross = new RegExp(String.raw`(\d+)\s*-?\s*(?:day|hari)?\s*(?:sma|ma|moving average|rata-rata)?\s*(?:crosses?|memotong|naik)\s*(?:above|over|ke atas|di atas)\s*(?:the\s*)?(\d+)`, "i").exec(c);
+      const cross = new RegExp(String.raw`(\d+)\s*-?\s*(?:day|hari)?\s*(?:sma|ma|moving average|average|avg|rata-rata)?\s*(?:crosses?|memotong|naik)\s*(?:above|over|ke atas|di atas)\s*(?:the\s*)?(\d+)`, "i").exec(c);
       if (cross) { hit = true; out.entry.all.push({ type: "sma_cross_up", fast: num(cross[1]), slow: num(cross[2]) }); }
       else {
-        any(String.raw`(?:above|over|diatas|di atas)\s*(?:the\s*|its\s*)?(\d+)\s*-?\s*(?:day|hari)?\s*(?:sma|ma|moving average|rata-rata)`, (r) => out.entry.all.push({ type: "above_sma", days: num(r[1]) }));
-        any(String.raw`(?:below|under|dibawah|di bawah)\s*(?:the\s*|its\s*)?(\d+)\s*-?\s*(?:day|hari)?\s*(?:sma|ma|moving average|rata-rata)`, (r) => out.entry.all.push({ type: "below_sma", days: num(r[1]) }));
+        any(String.raw`(?:above|over|diatas|di atas)\s*(?:the\s*|its\s*)?(\d+)\s*-?\s*(?:day|hari)?\s*(?:sma|ma|moving average|average|avg|rata-rata)`, (r) => out.entry.all.push({ type: "above_sma", days: num(r[1]) }));
+        any(String.raw`(?:below|under|dibawah|di bawah)\s*(?:the\s*|its\s*)?(\d+)\s*-?\s*(?:day|hari)?\s*(?:sma|ma|moving average|average|avg|rata-rata)`, (r) => out.entry.all.push({ type: "below_sma", days: num(r[1]) }));
       }
     }
     // a clause that only names tickers ("Beli AAPL", "MSFT and GOOGL") is fine

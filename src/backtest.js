@@ -128,7 +128,7 @@ export function backtest(s, bars, { startCash = 100_000, slipBps = 5, from, to }
 // plain-words verdict + the promotion gate
 export function verdict(m, R) {
   const notes = [], fails = [];
-  if (m.trades < 10) fails.push(`only ${m.trades} trades: too few to tell skill from luck (need 10+)`);
+  if (m.trades < 10) fails.push(`only ${m.trades} trade${m.trades === 1 ? "" : "s"}: too few to tell skill from luck (need 10+)`);
   if (m.maxDrawdown * 100 > R.maxDrawdownPct) fails.push(`max drawdown ${(m.maxDrawdown * 100).toFixed(1)}% is above the ${R.maxDrawdownPct}% limit`);
   if (m.totalReturn <= 0) fails.push(`lost money over the test (${(m.totalReturn * 100).toFixed(1)}%)`);
   // return per unit of worst drop must beat simply holding the same symbols

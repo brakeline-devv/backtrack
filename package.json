@@ -1,6 +1,6 @@
 {
   "name": "backtrack-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Backtrack: describe a trading strategy in plain words, backtest it honestly on real prices, and walk it up draft \u2192 backtested \u2192 paper \u2192 live (human-approved). MCP server + dashboard for AI agents; orders go through Brakeline.",
   "keywords": [
     "mcp",
