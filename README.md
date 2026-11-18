@@ -1,5 +1,7 @@
 # Backtrack · strategy lab for AI agents
 
+**Test the trade before you risk it.** · [Website](https://backtrack.trade) · [npm](https://www.npmjs.com/package/backtrack-mcp) · works with [Brakeline](https://brakeline.trade) and [Ballast](https://ballastmcp.com)
+
 Describe a trading strategy in plain words. Backtrack turns it into auditable rules, backtests it on ~3 years of
 real daily prices, and walks it up **draft → backtested → paper → live**. Only the human can approve live.
 Backtrack never trades: the agent places orders through [Brakeline](https://brakeline.trade).
@@ -17,14 +19,19 @@ Backtrack never trades: the agent places orders through [Brakeline](https://brak
 Rules: price drop / rise over N days, RSI below / above, above / below an N-day average, average cross up, MACD
 cross up, volume spike. Exits: take profit, stop loss, max hold days, RSI above.
 
-## Run
+## Install
 
 ```
-npm install
-npm start          # dashboard on http://localhost:6200/app
-npm test
-node src/cli.js "Buy QQQ when it drops 3% in 2 days, take profit 4%, stop loss 4%"
-claude mcp add backtrack -- node /path/to/backtest-loop/src/cli.js mcp
+claude mcp add backtrack -- npx -y backtrack-mcp
+claude mcp add brakeline -- npx -y brakeline      # executes the orders, risk-checked
+npx backtrack-mcp dashboard                       # strategy lab on http://localhost:6200/app
+npx backtrack-mcp "Buy QQQ when it drops 3% in 2 days, take profit 4%, stop loss 4%"
+```
+
+## Develop
+
+```
+npm install && npm start && npm test
 ```
 
 Past results do not predict future returns. Not investment advice.

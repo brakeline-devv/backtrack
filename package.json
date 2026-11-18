@@ -1,10 +1,49 @@
 {
   "name": "backtrack-mcp",
   "version": "0.1.0",
-  "private": true,
+  "description": "Backtrack: describe a trading strategy in plain words, backtest it honestly on real prices, and walk it up draft \u2192 backtested \u2192 paper \u2192 live (human-approved). MCP server + dashboard for AI agents; orders go through Brakeline.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "backtest",
+    "trading",
+    "strategy",
+    "paper-trading",
+    "claude",
+    "agent",
+    "robinhood",
+    "brakeline"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brakeline-devv/backtrack.git"
+  },
+  "homepage": "https://backtrack.trade",
+  "bugs": {
+    "url": "https://github.com/brakeline-devv/backtrack/issues"
+  },
   "type": "module",
-  "engines": { "node": ">=20" },
-  "bin": { "backtrack": "src/cli.js" },
-  "scripts": { "start": "node src/cli.js dashboard", "mcp": "node src/cli.js mcp", "test": "node --test test/backtrack.test.js" },
-  "dependencies": { "@modelcontextprotocol/sdk": "^1.32.2" }
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "backtrack": "src/cli.js"
+  },
+  "files": [
+    "src",
+    "web",
+    "!web/brand/pfp*",
+    "!web/media/og.jpg",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node src/cli.js dashboard",
+    "mcp": "node src/cli.js mcp",
+    "test": "node --test test/backtrack.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2"
+  }
 }
